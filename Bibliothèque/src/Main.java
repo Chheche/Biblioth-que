@@ -1,11 +1,16 @@
 import utilisateur.*;
 import java.util.Scanner;
+
+import bibliotheque.*;
 import factory.*;
 import service.*;
 import state.*;
 
 public class Main {
     public static void main(String[] args) {
+    	Bibliotheque biblio = new Bibliotheque();
+    	biblio.chargerLivresDepuisFichier();
+    	
         Utilisateur admin = UtilisateurFactory.creerUtilisateur("admin", "1", "Alice", "alice@bib.com");
         Utilisateur adherent = UtilisateurFactory.creerUtilisateur("adherent", "2", "Bob", "bob@bib.com");
 
@@ -24,7 +29,7 @@ public class Main {
 
                 switch (choix) {
                     case 1:
-                        System.out.println("Ajouter livre");
+                    	((Admin) utilisateur).ajouterLivre(scanner, biblio); //Ajouter un livre
                         break;
                     case 2:
                         System.out.println("Supprimer livre");
@@ -33,7 +38,7 @@ public class Main {
                         System.out.println("Gérer adhérents");
                         break;
                     case 4:
-                        System.out.println("Voir rapports");
+                    	((Admin) utilisateur).voirBiblio(scanner, biblio); //Voir les livres dans la bibliothèque
                         break;
                     case 5:
                         System.out.println("Déconnexion");
@@ -56,5 +61,5 @@ public class Main {
         }
 
         return utilisateur;
-    }
+    }	
 }

@@ -2,6 +2,7 @@ package utilisateur;
 
 import java.util.ArrayList;
 import java.util.List;
+import bibliotheque.*;
 
 public class Adherent extends Utilisateur {
     private List<Livre> livresEmpruntes;
