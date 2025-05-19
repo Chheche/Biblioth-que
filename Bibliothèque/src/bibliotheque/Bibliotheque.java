@@ -15,6 +15,25 @@ public class Bibliotheque {
         sauvegarderLivre(livre);
         System.out.println("Livre ajouté !");
     }
+    
+	public void supprimerLivre(int id) {
+	    Livre livreASupprimer = null;
+
+	    for (Livre livre : livres) {
+	        if (livre.getId() == id) {
+	            livreASupprimer = livre;
+	            break;
+	        }
+	    }
+
+	    if (livreASupprimer != null) {
+	        livres.remove(livreASupprimer);
+	        reecrire();
+	        System.out.println("Livre supprimé !");
+	    } else {
+	        System.out.println("Aucun livre avec cet ID.");
+	    }
+	}
 
     public List<Livre> getLivres() {
         return livres;
@@ -35,10 +54,20 @@ public class Bibliotheque {
     }
 	
 	public void sauvegarderLivre(Livre livre) {
-	    try (FileWriter writer = new FileWriter("livres.txt", true)) { // "true" = permet d'ajouter à la fin
+	    try (FileWriter writer = new FileWriter("livres.txt", true)) { // true = permet d'ajouter à la fin
 	    	writer.write(livre.getId() + ";" + livre.getTitre() + ";" + livre.getAuteur() + ";" + livre.getCategorie() + "\n");
 	    } catch (IOException e) {
 	        System.out.println("Erreur lors de la sauvegarde : " + e.getMessage());
+	    }
+	}
+	
+	public void reecrire() {
+	    try (FileWriter writer = new FileWriter("livres.txt", false)) { // false = écrase tout
+	        for (Livre livre : livres) {
+	            writer.write(livre.getId() + ";" + livre.getTitre() + ";" + livre.getAuteur() + ";" + livre.getCategorie() + "\n");
+	        }
+	    } catch (IOException e) {
+	        e.printStackTrace();
 	    }
 	}
 	

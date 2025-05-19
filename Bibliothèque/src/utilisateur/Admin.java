@@ -41,6 +41,24 @@ public class Admin extends Utilisateur {
         biblio.ajouterLivre(livre);
     }
     
+    
+    /*
+     * Méthode supprimerLivre
+     * Permet lorsque l'admin sélectionne 2 dans son menu d'acceder au menu pour supprimer un livre
+     * 
+     * */
+    public void supprimerLivre(Scanner scanner, Bibliotheque biblio) {
+    	System.out.println("\n-- Supprimer un livre --");
+        System.out.println("Tapez '1' à tout moment pour annuler\n");
+        
+        System.out.print("Entrez l’ID du livre à supprimer :\n");
+        int id = scanner.nextInt();
+        if (id == 1) return;
+        
+        biblio.supprimerLivre(id);
+    }
+    
+    
     /*
      * Méthode rapport
      * Permet de voir l'ensemble des livres ajouté à la bibliothèque

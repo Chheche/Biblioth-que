@@ -32,7 +32,7 @@ public class Main {
                     	((Admin) utilisateur).ajouterLivre(scanner, biblio); //Ajouter un livre
                         break;
                     case 2:
-                        System.out.println("Supprimer livre");
+                    	((Admin) utilisateur).supprimerLivre(scanner, biblio); //Supprimer un livreadmin
                         break;
                     case 3:
                         System.out.println("Gérer adhérents");
