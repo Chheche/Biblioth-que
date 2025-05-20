@@ -3,7 +3,8 @@ package utilisateur;
 import java.util.Scanner;
 
 import bibliotheque.*;
-import factory.UtilisateurFactory;
+import factory.*;
+import service.*;
 
 public class Admin extends Utilisateur {
 
@@ -12,8 +13,8 @@ public class Admin extends Utilisateur {
 	 * @param nom
 	 * @param email
 	 */
-    public Admin(String nom, String email) {
-        super(nom, email);
+    public Admin(String nom, String email, String motDePasse) {
+        super(nom, email, motDePasse);
     }
 
     /***
@@ -100,7 +101,7 @@ public class Admin extends Utilisateur {
      * @param scanner
      * @param biblio
      */
-    public void gererAdherent(Scanner scanner, Bibliotheque biblio) {
+    public void gererAdherent(Scanner scanner, Bibliotheque biblio, AuthentificationService auth) {
     	afficherMenuAdherent();
         System.out.println("Entrez votre choix :");
 
@@ -109,7 +110,7 @@ public class Admin extends Utilisateur {
 
         switch (choix) {
             case 1:
-            	ajouterAdherent(scanner, biblio);
+            	ajouterAdherent(scanner, biblio, auth);
                 break;
             case 2:
             	supprimerAdherent(scanner, biblio);
@@ -131,7 +132,7 @@ public class Admin extends Utilisateur {
      * @param scanner
      * @param biblio
      */
-    public void ajouterAdherent(Scanner scanner, Bibliotheque biblio) {
+    public void ajouterAdherent(Scanner scanner, Bibliotheque biblio, AuthentificationService auth) {
     	System.out.println("\n-- Ajouter un adhérent --");
         System.out.println("Tapez '1' à tout moment pour annuler\n");
         
@@ -147,8 +148,9 @@ public class Admin extends Utilisateur {
         String mdp = scanner.nextLine();
         if (mdp.equals("1")) return;
         
-        //Utilisateur adherent = UtilisateurFactory.creerUtilisateur("adherent", nom, mail, mdp);
-        //biblio.ajouterAdherent(adherent);
+        Utilisateur adherent = UtilisateurFactory.creerUtilisateur("adherent", nom, mail, mdp);
+        biblio.ajouterAdherent(adherent);
+        auth.ajouterUtilisateur(adherent);
     }
     
     /***
@@ -177,10 +179,34 @@ public class Admin extends Utilisateur {
     public void voirAdherent(Scanner scanner, Bibliotheque biblio) {
     	System.out.println("\n-- Bibliothèque --");
         
-        //biblio.afficherAdherent();
+        biblio.afficherAdherent();
         
         System.out.println("Tapez '1' pour revenir au menu");
         String titre = scanner.nextLine();
         if (titre.equals("1")) return;
+    }
+    
+    /***
+     * Méthode voirLivreEmprunte
+     * Permet de voir la liste des livres empruntés ainsi que les adhérents qui les possèdent
+     */
+    public void voirLivreEmprunte() {
+    	
+    }
+    
+    /***
+     * Méthode voirLivreEnReparation
+     * Permet de voir la liste des livres en réparation
+     */
+    public void voirLivreEnReparation() {
+    	
+    }
+    
+    /***
+     * Méthode voirLivreReserve
+     * Permet de voir la liste des livres en réservation
+     */
+    public void voirLivreReserve() {
+    	
     }
 }

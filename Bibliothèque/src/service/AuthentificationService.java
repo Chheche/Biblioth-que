@@ -2,23 +2,60 @@ package service;
 
 import utilisateur.*;
 import factory.*;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 public class AuthentificationService {
-    private Map<String, String> comptes = new HashMap<>();
     private Map<String, Utilisateur> utilisateurs = new HashMap<>();
 
     /***
      * Constructeur AuthentificationService
      */
     public AuthentificationService() {
-        Utilisateur admin = UtilisateurFactory.creerUtilisateur("admin", "Alice", "alice@bib.com");
-        Utilisateur adherent = UtilisateurFactory.creerUtilisateur("adherent", "Bob", "bob@bib.com");
-        utilisateurs.put("admin", admin);
-        utilisateurs.put("bob", adherent);
+        Utilisateur admin = UtilisateurFactory.creerUtilisateur("admin", "Rafael", "rafael@bib.com", "admin123");
+        Utilisateur adherent = UtilisateurFactory.creerUtilisateur("adherent", "Bob", "bob@bib.com", "bob123");
+        
+        utilisateurs.put(admin.getEmail(), admin);
+        utilisateurs.put(adherent.getEmail(), adherent);
+        
+        chargerUtilisateurs();
+    }
+    
+    /***
+     * Méthode ajouterUtilisateur
+     * Permet d'ajouter les nouveaux utilisateurs dans la map
+     * @param utilisateur
+     */
+    public void ajouterUtilisateur(Utilisateur utilisateur) {
+    	utilisateurs.put(utilisateur.getEmail(), utilisateur);
+    }
+    
+    /***
+     * Méthode chargerUtilisateurs
+     * Permet de récupérer les utilisateurs du fichier txt et de les réajouter dans la map pour que la connexion fonctionne
+     */
+    public void chargerUtilisateurs() {
+        // Charge les adhérents depuis le fichier et les ajoute à `utilisateurs`
+        try (BufferedReader reader = new BufferedReader(new FileReader("adherents.txt"))) {
+            String ligne;
+            while ((ligne = reader.readLine()) != null) {
+                String[] parties = ligne.split(";");
+                if (parties.length == 4) {
+                    int id = Integer.parseInt(parties[0]);
+                    String nom = parties[1];
+                    String email = parties[2];
+                    String motDePasse = parties[3];
 
-        comptes.put("admin", "admin123");
-        comptes.put("bob", "bob123");
+                    Utilisateur adherent = new Adherent(id, nom, email, motDePasse);
+                    utilisateurs.put(adherent.getEmail(), adherent);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Erreur de chargement des adhérents : " + e.getMessage());
+        }
     }
 
     /***
@@ -28,16 +65,22 @@ public class AuthentificationService {
      * @return
      */
     public Utilisateur seConnecter(Scanner scanner) {
-        System.out.print("Identifiant : ");
-        String login = scanner.nextLine();
+        System.out.print("Email : ");
+        String email = scanner.nextLine();
         System.out.print("Mot de passe : ");
         String motDePasse = scanner.nextLine();
+        
+        Utilisateur utilisateur = utilisateurs.get(email);
 
-        if (comptes.containsKey(login) && comptes.get(login).equals(motDePasse)) {
-            return utilisateurs.get(login);
+        if (utilisateur != null && utilisateur.getMotDePasse().equals(motDePasse)) {
+            return utilisateur;
         } else {
             System.out.println("Identifiants invalides.");
             return null;
         }
+    }
+    
+    public Map<String, Utilisateur> getUtilisateurs() {
+        return utilisateurs;
     }
 }
