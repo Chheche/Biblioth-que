@@ -39,4 +39,12 @@ public class Adherent extends Utilisateur {
     public void ajouterLivre(Livre livre) {
         livresEmpruntes.add(livre);
     }
+
+    /*
+	@Override
+	public String toString() {
+		return " Adherent [" + getId() + "]: " + nom + " - " + email;
+	}
+	*/
+    
 }

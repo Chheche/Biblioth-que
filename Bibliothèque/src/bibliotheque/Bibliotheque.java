@@ -120,4 +120,19 @@ public class Bibliotheque {
 	        System.out.println("Aucun fichier trouvé");
 	    }
 	}
+	
+    /***
+     * Méthode afficherAdherent
+     * Permet de parcourir toute la liste est d'afficher les informations des adhérents
+     */
+	/*
+	public void afficherAdherent() {
+        if (livres.isEmpty()) {
+            System.out.println("Aucun adhérent dans la bibliothèque.");
+        } else {
+            for (Adherent a : adherents) {
+                System.out.println(a);
+            }
+        }
+    }*/
 }

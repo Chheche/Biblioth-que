@@ -21,4 +21,20 @@ public abstract class Utilisateur {
     public String getEmail() {
     	return email;
     }
+
+	public int getId() {
+		return id;
+	}
+
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	
+    
+    
 }

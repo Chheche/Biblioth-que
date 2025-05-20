@@ -25,6 +25,15 @@ public class Admin extends Utilisateur {
         System.out.println("\n-- Menu Admin --");
         System.out.println("1. Ajouter livre\n2. Supprimer livre\n3. Gérer adhérents\n4. Voir rapports\n5. Se déconnecter");
     }
+    
+    /***
+     * Méthode afficherMenuAdherent
+     * Permet d'afficher le menu pour gérer les adhérents
+     */
+    public void afficherMenuAdherent() {
+        System.out.println("\n-- Gérer les adhérents --");
+        System.out.println("1. Ajouter adhérent\n2. Supprimer adhérent\n3. Voir liste adhérent\n4. Retour menu");
+    }
    
     /***
      * Méthode ajouterLivre
@@ -92,8 +101,7 @@ public class Admin extends Utilisateur {
      * @param biblio
      */
     public void gererAdherent(Scanner scanner, Bibliotheque biblio) {
-    	System.out.println("\n-- Gérer les adhérents --");
-    	
+    	afficherMenuAdherent();
         System.out.println("Entrez votre choix :");
 
         int choix = scanner.nextInt();
@@ -101,14 +109,16 @@ public class Admin extends Utilisateur {
 
         switch (choix) {
             case 1:
-            	//Ajouter un adhérent
+            	ajouterAdherent(scanner, biblio);
                 break;
             case 2:
-            	//Supprimer un adhérent
+            	supprimerAdherent(scanner, biblio);
                 break;
             case 3:
-            	//Voir la liste des adhérents
+            	voirAdherent(scanner, biblio);
                 break;
+            case 4:
+            	return;
             default:
                 System.out.println("Choix invalide.");
                 break;
@@ -133,11 +143,44 @@ public class Admin extends Utilisateur {
         String mail = scanner.nextLine();
         if (mail.equals("1")) return;
         
-        System.out.print("Categorie : ");
-        String categorie = scanner.nextLine();
-        if (categorie.equals("1")) return;
+        System.out.print("Mot de passe : ");
+        String mdp = scanner.nextLine();
+        if (mdp.equals("1")) return;
         
-        Utilisateur adherent = UtilisateurFactory.creerUtilisateur("adherent", nom, mail);
+        //Utilisateur adherent = UtilisateurFactory.creerUtilisateur("adherent", nom, mail, mdp);
         //biblio.ajouterAdherent(adherent);
+    }
+    
+    /***
+     * Méthode supprimerAdherent
+     * Permet de supprimer un adherent
+     * @param scanner
+     * @param biblio
+     */
+    public void supprimerAdherent(Scanner scanner, Bibliotheque biblio) {
+    	System.out.println("\n-- Supprimer un adherent --");
+        System.out.println("Tapez '1' à tout moment pour annuler\n");
+        
+        System.out.print("Entrez l’ID de l'adherent à supprimer :\n");
+        int id = scanner.nextInt();
+        if (id == 1) return;
+        
+        //biblio.supprimerAdherent(id);
+    }
+    
+    /***
+     * Méthode voirAdherent
+     * Permet de voir l'ensemble des adhérents ajouté à la bibliothèque
+     * @param scanner
+     * @param biblio
+     */
+    public void voirAdherent(Scanner scanner, Bibliotheque biblio) {
+    	System.out.println("\n-- Bibliothèque --");
+        
+        //biblio.afficherAdherent();
+        
+        System.out.println("Tapez '1' pour revenir au menu");
+        String titre = scanner.nextLine();
+        if (titre.equals("1")) return;
     }
 }
