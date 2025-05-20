@@ -7,11 +7,20 @@ import bibliotheque.*;
 public class Adherent extends Utilisateur {
     private List<Livre> livresEmpruntes;
 
-    public Adherent(String id, String nom, String email) {
-        super(id, nom, email);
+    /***
+     * Constructeur Adherent
+     * @param nom
+     * @param email
+     */
+    public Adherent(String nom, String email) {
+        super(nom, email);
         this.livresEmpruntes = new ArrayList<>();
     }
 
+    /***
+     * Méthode afficherMenu
+     * Permet l'affichage du menu
+     */
     @Override
     public void afficherMenu() {
         System.out.println("\n-- Menu Adhérent --");
@@ -22,6 +31,11 @@ public class Adherent extends Utilisateur {
         return livresEmpruntes;
     }
 
+    /***
+     * Méthode ajouterLivre
+     * Permet d'emprunter un livre en l'ajouter dans la list de livre emprunté de l'adhérent
+     * @param livre
+     */
     public void ajouterLivre(Livre livre) {
         livresEmpruntes.add(livre);
     }

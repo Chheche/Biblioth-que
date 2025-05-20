@@ -1,12 +1,13 @@
 package utilisateur;
 
 public abstract class Utilisateur {
-    protected String id;
+	private final int id;
     protected String nom;
     protected String email;
+    private static int cpt = 0;
 
-    public Utilisateur(String id, String nom, String email) {
-        this.id = id;
+    public Utilisateur(String nom, String email) {
+        this.id = ++cpt;
         this.nom = nom;
         this.email = email;
     }
@@ -19,9 +20,5 @@ public abstract class Utilisateur {
     
     public String getEmail() {
     	return email;
-    }
-    
-    public String getId() {
-    	return id;
     }
 }

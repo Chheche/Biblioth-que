@@ -8,9 +8,12 @@ public class AuthentificationService {
     private Map<String, String> comptes = new HashMap<>();
     private Map<String, Utilisateur> utilisateurs = new HashMap<>();
 
+    /***
+     * Constructeur AuthentificationService
+     */
     public AuthentificationService() {
-        Utilisateur admin = UtilisateurFactory.creerUtilisateur("admin", "1", "Alice", "alice@bib.com");
-        Utilisateur adherent = UtilisateurFactory.creerUtilisateur("adherent", "2", "Bob", "bob@bib.com");
+        Utilisateur admin = UtilisateurFactory.creerUtilisateur("admin", "Alice", "alice@bib.com");
+        Utilisateur adherent = UtilisateurFactory.creerUtilisateur("adherent", "Bob", "bob@bib.com");
         utilisateurs.put("admin", admin);
         utilisateurs.put("bob", adherent);
 
@@ -18,6 +21,12 @@ public class AuthentificationService {
         comptes.put("bob", "bob123");
     }
 
+    /***
+     * Méthode seConnecter
+     * Permet de vérifier si l'utilisateur est existant dans la map
+     * @param scanner
+     * @return
+     */
     public Utilisateur seConnecter(Scanner scanner) {
         System.out.print("Identifiant : ");
         String login = scanner.nextLine();

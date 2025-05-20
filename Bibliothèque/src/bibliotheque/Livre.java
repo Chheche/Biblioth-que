@@ -7,7 +7,13 @@ public class Livre {
     private String categorie;
     private static int cpt = 0;
 
-    // Constructeur utilisé quand un admin crée un nouveau livre
+    /***
+     * Contructeur Livre
+     * Utilisé quand un admin crée un nouveau livre
+     * @param titre
+     * @param auteur
+     * @param categorie
+     */
     public Livre(String titre, String auteur, String categorie) {
         this.id = ++cpt;
         this.titre = titre;
@@ -15,7 +21,14 @@ public class Livre {
         this.categorie = categorie;
     }
     
-    // Constructeur utilisé lors du chargement depuis le fichier
+    /***
+     * Constructeur Livre
+     * Utilisé lors du chargement depuis le fichier
+     * @param id
+     * @param titre
+     * @param auteur
+     * @param categorie
+     */
     public Livre(int id, String titre, String auteur, String categorie) {
         this.id = id;
         this.titre = titre;

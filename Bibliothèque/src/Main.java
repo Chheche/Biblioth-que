@@ -11,8 +11,8 @@ public class Main {
     	Bibliotheque biblio = new Bibliotheque();
     	biblio.chargerLivresDepuisFichier();
     	
-        Utilisateur admin = UtilisateurFactory.creerUtilisateur("admin", "1", "Alice", "alice@bib.com");
-        Utilisateur adherent = UtilisateurFactory.creerUtilisateur("adherent", "2", "Bob", "bob@bib.com");
+        Utilisateur admin = UtilisateurFactory.creerUtilisateur("admin", "Alice", "alice@bib.com");
+        Utilisateur adherent = UtilisateurFactory.creerUtilisateur("adherent", "Bob", "bob@bib.com");
 
         Scanner scanner = new Scanner(System.in);
 
@@ -32,10 +32,10 @@ public class Main {
                     	((Admin) utilisateur).ajouterLivre(scanner, biblio); //Ajouter un livre
                         break;
                     case 2:
-                    	((Admin) utilisateur).supprimerLivre(scanner, biblio); //Supprimer un livreadmin
+                    	((Admin) utilisateur).supprimerLivre(scanner, biblio); //Supprimer un livre
                         break;
                     case 3:
-                        System.out.println("Gérer adhérents");
+                    	((Admin) utilisateur).gererAdherent(scanner, biblio); //Gérer les adhérents
                         break;
                     case 4:
                     	((Admin) utilisateur).voirBiblio(scanner, biblio); //Voir les livres dans la bibliothèque
