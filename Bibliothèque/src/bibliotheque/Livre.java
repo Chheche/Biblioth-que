@@ -1,11 +1,14 @@
 package bibliotheque;
 
+import state.*;
+
 public class Livre {
     private final int id;
     private String titre;
     private String auteur;
     private String categorie;
     private static int cpt = 0;
+    private EtatLivre etat;
 
     /***
      * Contructeur Livre
@@ -72,4 +75,32 @@ public class Livre {
 	public void setCategorie(String categorie) {
 		this.categorie = categorie;
 	}
+	
+    public void disponible() {
+    	etat.disponible(this);
+    }
+
+    public void emprunté() {
+    	etat.emprunté(this);
+    }
+
+    public void réservé() {
+    	etat.réservé(this); 
+    }
+    
+    public void enRéparation() {
+    	etat.enRéparation(this); 
+    }
+    
+    public void doAction() {
+    	etat.doAction(this);
+    }
+
+    public void setEtat(EtatLivre e) {
+    	this.etat = e;
+    }
+    
+    public EtatLivre getEtat() {
+    	return etat;
+    }
 }

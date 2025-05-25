@@ -58,6 +58,7 @@ public class Main {
 	                	((Adherent) utilisateur).voirLivre(scanner, biblio); //Voir les livres dans la bibliothèque
 	                    break;
 	                case 2:
+	                	((Adherent) utilisateur).emprunterLivre(scanner, biblio); //Emprunter un livre
 	                    break;
 	                case 3:
 	                    break;

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import bibliotheque.*;
+import state.*;
 
 public class Adherent extends Utilisateur {
     private List<Livre> livresEmpruntes;
@@ -75,7 +76,24 @@ public class Adherent extends Utilisateur {
      * @param biblio
      */
     public void emprunterLivre(Scanner scanner, Bibliotheque biblio) {
-    	
+        System.out.print("Entrez le titre du livre à emprunter : ");
+        String titreRecherche = scanner.nextLine().toLowerCase();
+
+        Livre livreTrouve = null;
+        for (Livre livre : biblio.getLivres()) {
+            if (livre.getTitre().toLowerCase().equals(titreRecherche)) {
+                livreTrouve = livre;
+                break;
+            }
+        }
+
+        if (livreTrouve == null) {
+            System.out.println("Livre non trouvé.");
+            return;
+        }
+
+        // Appel au comportement défini par l'état du livre
+        livreTrouve.emprunté();
     }
     
     /***
