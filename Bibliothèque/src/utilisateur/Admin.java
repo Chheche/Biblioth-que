@@ -1,5 +1,7 @@
 package utilisateur;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import bibliotheque.*;
@@ -8,7 +10,7 @@ import service.*;
 
 public class Admin extends Utilisateur {
 
-	/***
+	/**
 	 * Construteur Admin
 	 * @param nom
 	 * @param email
@@ -17,17 +19,17 @@ public class Admin extends Utilisateur {
         super(nom, email, motDePasse);
     }
 
-    /***
+    /**
      * Méthode afficherMenu
      * Permet l'affichage du menu
      */
     @Override
     public void afficherMenu() {
         System.out.println("\n-- Menu Admin --");
-        System.out.println("1. Ajouter livre\n2. Supprimer livre\n3. Gérer adhérents\n4. Voir rapports\n5. Se déconnecter");
+        System.out.println("1. Ajouter livre\n2. Supprimer livre\n3. Gérer adhérents\n4. Voir bibliothèque\n5. Voir livres empruntés\n6. Se déconnecter");
     }
     
-    /***
+    /**
      * Méthode afficherMenuAdherent
      * Permet d'afficher le menu pour gérer les adhérents
      */
@@ -36,7 +38,7 @@ public class Admin extends Utilisateur {
         System.out.println("1. Ajouter adhérent\n2. Supprimer adhérent\n3. Voir liste adhérent\n4. Retour menu");
     }
    
-    /***
+    /**
      * Méthode ajouterLivre
      * Permet lorsque l'admin sélectionne 1 dans son menu d'acceder au menu d'ajout de livre
      * @param scanner
@@ -62,7 +64,7 @@ public class Admin extends Utilisateur {
         biblio.ajouterLivre(livre);
     }
     
-    /***
+    /**
      * Méthode supprimerLivre
      * Permet lorsque l'admin sélectionne 2 dans son menu d'acceder au menu pour supprimer un livre
      * @param scanner
@@ -79,7 +81,7 @@ public class Admin extends Utilisateur {
         biblio.supprimerLivre(id);
     }
 
-    /***
+    /**
      * Méthode voirBiblio
      * Permet de voir l'ensemble des livres ajouté à la bibliothèque
      * @param scanner
@@ -95,7 +97,7 @@ public class Admin extends Utilisateur {
         if (titre.equals("1")) return;
     }
     
-    /***
+    /**
      * Methode gererAdherent
      * Permet de passer au menu des adhérents
      * @param scanner
@@ -126,7 +128,7 @@ public class Admin extends Utilisateur {
         }
     }
     
-    /***
+    /**
      * Méthode ajouterAdherent
      * Permet d'ajouter un adhérent
      * @param scanner
@@ -153,7 +155,7 @@ public class Admin extends Utilisateur {
         auth.ajouterUtilisateur(adherent);
     }
     
-    /***
+    /**
      * Méthode supprimerAdherent
      * Permet de supprimer un adherent
      * @param scanner
@@ -170,7 +172,7 @@ public class Admin extends Utilisateur {
         //biblio.supprimerAdherent(id);
     }
     
-    /***
+    /**
      * Méthode voirAdherent
      * Permet de voir l'ensemble des adhérents ajouté à la bibliothèque
      * @param scanner
@@ -186,15 +188,34 @@ public class Admin extends Utilisateur {
         if (titre.equals("1")) return;
     }
     
-    /***
-     * Méthode voirLivreEmprunte
+    /**
+     * Méthode afficherLivresEmpruntes
      * Permet de voir la liste des livres empruntés ainsi que les adhérents qui les possèdent
+     * @param biblio
      */
-    public void voirLivreEmprunte() {
-    	
+    public void afficherLivresEmpruntes(Scanner scanner, Bibliotheque biblio) {
+    	System.out.println("\n-- Livres empruntés --");
+    	Map<Utilisateur, List<Livre>> map = biblio.getLivresEmpruntes();
+
+        for (Map.Entry<Utilisateur, List<Livre>> entry : map.entrySet()) {
+            Utilisateur utilisateur = entry.getKey();
+            List<Livre> livres = entry.getValue();
+
+            if (!livres.isEmpty()) {
+                System.out.println("Adhérent : " + utilisateur.getNom());
+                for (Livre livre : livres) {
+                    System.out.println("  - " + livre.getTitre());
+                }
+            }
+        }
+
+        System.out.println("Tapez '1' pour revenir au menu");
+        String titre = scanner.nextLine();
+        if (titre.equals("1")) return;
     }
+
     
-    /***
+    /**
      * Méthode voirLivreEnReparation
      * Permet de voir la liste des livres en réparation
      */
@@ -202,7 +223,7 @@ public class Admin extends Utilisateur {
     	
     }
     
-    /***
+    /**
      * Méthode voirLivreReserve
      * Permet de voir la liste des livres en réservation
      */

@@ -10,7 +10,7 @@ public class Livre {
     private static int cpt = 0;
     private EtatLivre etat;
 
-    /***
+    /**
      * Contructeur Livre
      * Utilisé quand un admin crée un nouveau livre
      * @param titre
@@ -22,9 +22,10 @@ public class Livre {
         this.titre = titre;
         this.auteur = auteur;
         this.categorie = categorie;
+        this.etat = new LivreDisponible();
     }
     
-    /***
+    /**
      * Constructeur Livre
      * Utilisé lors du chargement depuis le fichier
      * @param id
@@ -37,6 +38,7 @@ public class Livre {
         this.titre = titre;
         this.auteur = auteur;
         this.categorie = categorie;
+        this.etat = new LivreDisponible();
 
         if (id > cpt) {
             cpt = id;
@@ -57,7 +59,7 @@ public class Livre {
 
     @Override
     public String toString() {
-        return " Livre [" + id + "]: " + titre + " - " + auteur + " (" + categorie + ")";
+        return " Livre [" + id + "]: " + titre + " - " + auteur + " (" + categorie + ") - " + etat;
     }
 
 	public int getId() {
@@ -75,10 +77,11 @@ public class Livre {
 	public void setCategorie(String categorie) {
 		this.categorie = categorie;
 	}
-	
+    
     public void disponible() {
-    	etat.disponible(this);
+        this.etat = new LivreDisponible();
     }
+
 
     public void emprunté() {
     	etat.emprunté(this);

@@ -11,6 +11,7 @@ public class Main {
     	Bibliotheque biblio = new Bibliotheque();
     	biblio.chargerAdherentsDepuisFichier();
     	biblio.chargerLivresDepuisFichier();
+    	biblio.chargerEmpruntsDepuisFichier();
     	
     	AuthentificationService auth = new AuthentificationService();
 
@@ -22,7 +23,7 @@ public class Main {
             
             while (active) {
                 utilisateur.afficherMenu();
-                System.out.println("Entrez votre choix (ex : 5 pour se déconnecter) :");
+                System.out.println("Entrez votre choix :");
 
                 int choix = scanner.nextInt();
                 scanner.nextLine();
@@ -43,6 +44,9 @@ public class Main {
 	                    	((Admin) utilisateur).voirBiblio(scanner, biblio); //Voir les livres dans la bibliothèque
 	                        break;
 	                    case 5:
+	                    	((Admin) utilisateur).afficherLivresEmpruntes(scanner, biblio); //Voir les livres empruntés dans la bibliothèque
+	                        break;
+	                    case 6:
 	                        System.out.println("Déconnexion");
 	                        active = false;
 	                        break;
@@ -61,6 +65,7 @@ public class Main {
 	                	((Adherent) utilisateur).emprunterLivre(scanner, biblio); //Emprunter un livre
 	                    break;
 	                case 3:
+	                	((Adherent) utilisateur).retournerLivre(scanner, biblio); //Retourne un livre emprunté
 	                    break;
 	                case 4:
 	                    break;
@@ -77,6 +82,13 @@ public class Main {
         }
     }
 
+    /**
+     * Méthode connexion
+     * Permet d'authenfier l'utilisateur qui se connecte
+     * @param scanner
+     * @param auth
+     * @return
+     */
     public static Utilisateur connexion(Scanner scanner, AuthentificationService auth) {
         Utilisateur utilisateur = null;
 

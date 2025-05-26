@@ -1,6 +1,7 @@
 package bibliotheque;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,16 +10,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import state.*;
 import utilisateur.*;
 
 public class Bibliotheque {
     private List<Livre> livres = new ArrayList<>();
     private List<Utilisateur> adherents = new ArrayList();
-    private Map<Livre, Utilisateur> livresEmprunte = new HashMap<>();
+    private Map<Utilisateur, List<Livre>> livresEmpruntes = new HashMap<>();
     private List<Livre> livresEnReparation = new ArrayList();
     private Map<Livre, Utilisateur> livresReserve = new HashMap<>();
 
-    /***
+    /**
      * Méthode ajouterLivre
      * Permet d'ajouter un livre dans la list puis de sauvegarder le fichier txt
      * @param livre
@@ -29,7 +31,7 @@ public class Bibliotheque {
         System.out.println("Livre ajouté !");
     }
     
-    /***
+    /**
      * Méthode ajouterAdherent
      * Permet d'ajouter un adherent dans la list puis de sauvegarder le fichier txt
      * @param adherent
@@ -40,7 +42,23 @@ public class Bibliotheque {
         System.out.println("Adherent ajouté !");
     }
     
-    /***
+    /**
+     * Méthode ajouterAdherent
+     * Permet d'ajouter un emprunt dans la map et de sauvegarder
+     * @param adherent
+     * @param livre
+     */
+    public void ajouterEmprunt(Utilisateur adherent, Livre livre) {
+        if (!livresEmpruntes.containsKey(adherent)) {
+            livresEmpruntes.put(adherent, new ArrayList<>());
+        }
+        livresEmpruntes.get(adherent).add(livre);
+
+        sauvegarderEmprunts();
+    }
+
+    
+    /**
      * Méthode supprimerLivre
      * Permet de supprimer un livre de notre list
      * @param id
@@ -64,7 +82,7 @@ public class Bibliotheque {
 	    }
 	}
 	
-	/***
+	/**
 	 * Méthode supprimerAdherent
 	 * Permet de supprimer un adherent de notre list
 	 * @param id
@@ -96,7 +114,7 @@ public class Bibliotheque {
 		this.livres = livres;
 	}
 
-    /***
+    /**
      * Méthode afficherLivres
      * Permet de parcourir toute la liste est d'afficher les informations du livre
      */
@@ -110,7 +128,7 @@ public class Bibliotheque {
         }
     }
 	
-	/***
+	/**
 	 * Methode sauvegarderLivre
 	 Permet de sauvegarder les instances dans un fichier txt
 	 * @param livre
@@ -123,7 +141,7 @@ public class Bibliotheque {
 	    }
 	}
 	
-	/***
+	/**
 	 * Méthode reecrireLivre
 	 * Permet de réecrire par dessus tout le fichier txt (évite le problème des id)
 	 */
@@ -137,7 +155,7 @@ public class Bibliotheque {
 	    }
 	}
 	
-	/***
+	/**
 	 * Methode chargerLivreDepuisFichier
 	 * Permet de récupérer les données d'un fichier txt, de recréer l'objet et le réajouter dans la liste
 	 */
@@ -161,7 +179,7 @@ public class Bibliotheque {
 	    }
 	}
 	
-    /***
+    /**
      * Méthode afficherAdherent
      * Permet de parcourir toute la liste est d'afficher les informations des adhérents
      */
@@ -175,7 +193,7 @@ public class Bibliotheque {
         }
 	}
 	
-	/***
+	/**
 	 * Methode sauvegarderAdherent
 	 Permet de sauvegarder les instances dans un fichier txt
 	 * @param adherent
@@ -188,7 +206,7 @@ public class Bibliotheque {
 	    }
 	}
 	
-	/***
+	/**
 	 * Méthode reecrireUtilisateur
 	 * Permet de réecrire par dessus tout le fichier txt (évite le problème des id)
 	 */
@@ -202,7 +220,7 @@ public class Bibliotheque {
 	    }
 	}
 	
-	/***
+	/**
 	 * Methode chargerAdherentsDepuisFichier
 	 * Permet de récupérer les données d'un fichier txt, de recréer l'objet et le réajouter dans la liste
 	 */
@@ -225,4 +243,119 @@ public class Bibliotheque {
 	        System.out.println("Aucun fichier adherent trouvé");
 	    }
 	}
+	
+	/**
+	 * Méthode sauvegarderEmprunts
+	 * Permet de sauvegarder dans un fichier txt les associations entre adhérent et livre emprunté
+	 */
+	public void sauvegarderEmprunts() {
+	    try (BufferedWriter writer = new BufferedWriter(new FileWriter("livresEmprunte.txt"))) {
+	        for (Map.Entry<Utilisateur, List<Livre>> entry : livresEmpruntes.entrySet()) {
+	            Utilisateur user = entry.getKey();
+	            List<Livre> livres = entry.getValue();
+
+	            StringBuilder ligne = new StringBuilder();
+	            ligne.append(user.getNom()).append(";").append(user.getEmail()).append(";");
+
+	            for (int i = 0; i < livres.size(); i++) {
+	                ligne.append(livres.get(i).getId());
+	                if (i < livres.size() - 1) {
+	                    ligne.append(",");
+	                }
+	            }
+
+	            writer.write(ligne.toString());
+	            writer.newLine();
+	        }
+
+	    } catch (IOException e) {
+	        System.out.println("Erreur lors de la sauvegarde des emprunts : " + e.getMessage());
+	    }
+	}
+	
+	/**
+	 * Méthode chargerEmpruntsDepuisFichier
+	 * Permet de charger les livres empruntés du fichier txt
+	 * @param utilisateurs
+	 */
+	public void chargerEmpruntsDepuisFichier() {
+	    try (BufferedReader reader = new BufferedReader(new FileReader("livresEmprunte.txt"))) {
+	        String ligne;
+	        while ((ligne = reader.readLine()) != null) {
+	            String[] parts = ligne.split(";");
+	            if (parts.length == 3) {
+	                String nomAdherent = parts[0];
+	                String email = parts[1];
+	                String[] idsLivres = parts[2].split(",");
+
+	                Utilisateur utilisateur = getAdherentParNom(nomAdherent); // Ou par email pour être plus fiable
+
+	                if (utilisateur != null) {
+	                    for (String idStr : idsLivres) {
+	                        try {
+	                            int id = Integer.parseInt(idStr);
+	                            Livre livre = getLivreById(id);
+	                            if (livre != null) {
+	                                ajouterEmprunt(utilisateur, livre);
+	                                livre.emprunté(); // remet l'état à Emprunté au lancement
+	                            }
+	                        } catch (NumberFormatException e) {
+	                            System.out.println("ID de livre invalide : " + idStr);
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	    } catch (IOException e) {
+	        System.err.println("Erreur lors du chargement des emprunts : " + e.getMessage());
+	    }
+	}
+
+
+	
+	/**
+	 * Méthode getLivreById
+	 * Permet de retrouver les vrais objets Livre à partir de leur ID
+	 * @param id
+	 * @return
+	 */
+	public Livre getLivreById(int id) {
+	    for (Livre livre : this.getLivres()) {
+	        if (livre.getId() == id) {
+	            return livre;
+	        }
+	    }
+	    return null;
+	}
+	
+	public Utilisateur getAdherentParNom(String nom) {
+	    for (Utilisateur u : adherents) {
+	        if (u.getNom().equalsIgnoreCase(nom)) return u;
+	    }
+	    return null;
+	}
+
+	public Livre getLivreParTitre(String titre) {
+	    for (Livre l : livres) {
+	        if (l.getTitre().equalsIgnoreCase(titre)) return l;
+	    }
+	    return null;
+	}
+
+	public List<Utilisateur> getAdherents() {
+		return adherents;
+	}
+	
+	public Map<Utilisateur, List<Livre>> getLivresEmpruntes() {
+		return livresEmpruntes;
+	}
+
+	public List<Livre> getLivresEnReparation() {
+		return livresEnReparation;
+	}
+
+	public Map<Livre, Utilisateur> getLivresReserve() {
+		return livresReserve;
+	}
+
 }

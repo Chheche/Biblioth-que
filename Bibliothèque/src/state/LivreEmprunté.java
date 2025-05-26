@@ -30,4 +30,10 @@ public class LivreEmprunté implements EtatLivre {
 	public void disponible(Livre livre) {
 		System.out.println("Le livre n'est pas disponible");
 	}
+	
+	@Override
+	public String toString() {
+	    return "Emprunté";
+	}
+
 }
