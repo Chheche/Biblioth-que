@@ -97,8 +97,13 @@ public class Adherent extends Utilisateur {
             return;
         }
 
-        trouve.emprunté();
-        livresEmpruntes.add(trouve);
+        try {
+            trouve.emprunté();
+            livresEmpruntes.add(trouve);
+        }catch(Exception e) {
+        	System.out.println("Erreur : " + e.getMessage());
+        	return;
+        }
 
         System.out.println("Livre '" + trouve.getTitre() + "' emprunté avec succès.");
         biblio.ajouterEmprunt(this, trouve);
@@ -125,11 +130,9 @@ public class Adherent extends Utilisateur {
         }
 
         System.out.println("Tapez '0' pour revenir au menu");
-        String retour = scanner.nextLine();
-        if (retour.equals("0")) return;
-
         System.out.print("Entrez le numéro du livre à retourner : ");
         String input = scanner.nextLine();
+        if (input.equals("0")) return;
 
         try {
             int choix = Integer.parseInt(input);

@@ -7,7 +7,7 @@ public class LivreDisponible implements EtatLivre {
 
     @Override
     public void emprunté(Livre livre) {
-        System.out.println("Le livre est emprunté.");
+        System.out.println("Livre emprunté avec succès.");
         livre.setEtat(new LivreEmprunté());
     }
 

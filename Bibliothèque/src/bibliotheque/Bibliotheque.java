@@ -98,7 +98,7 @@ public class Bibliotheque {
 	    }
 
 	    if (adherentASupprimer != null) {
-	        livres.remove(adherentASupprimer);
+	        adherents.remove(adherentASupprimer);
 	        reecrireLivre();
 	        System.out.println("Adherent supprimé !");
 	    } else {
@@ -143,7 +143,7 @@ public class Bibliotheque {
 	
 	/**
 	 * Méthode reecrireLivre
-	 * Permet de réecrire par dessus tout le fichier txt (évite le problème des id)
+	 * Permet de réecrire par dessus tout le fichier txt (évite le problème des id). Utile lorsque l'on supprime un livre.
 	 */
 	public void reecrireLivre() {
 	    try (FileWriter writer = new FileWriter("livres.txt", false)) { // false = écrase tout
@@ -277,8 +277,9 @@ public class Bibliotheque {
 	 * Méthode chargerEmpruntsDepuisFichier
 	 * Permet de charger les livres empruntés du fichier txt
 	 * @param utilisateurs
+	 * @throws Exception 
 	 */
-	public void chargerEmpruntsDepuisFichier() {
+	public void chargerEmpruntsDepuisFichier() throws Exception {
 	    try (BufferedReader reader = new BufferedReader(new FileReader("livresEmprunte.txt"))) {
 	        String ligne;
 	        while ((ligne = reader.readLine()) != null) {
@@ -288,7 +289,7 @@ public class Bibliotheque {
 	                String email = parts[1];
 	                String[] idsLivres = parts[2].split(",");
 
-	                Utilisateur utilisateur = getAdherentParNom(nomAdherent); // Ou par email pour être plus fiable
+	                Utilisateur utilisateur = getAdherentParNom(nomAdherent);
 
 	                if (utilisateur != null) {
 	                    for (String idStr : idsLivres) {
@@ -297,7 +298,7 @@ public class Bibliotheque {
 	                            Livre livre = getLivreById(id);
 	                            if (livre != null) {
 	                                ajouterEmprunt(utilisateur, livre);
-	                                livre.emprunté(); // remet l'état à Emprunté au lancement
+	                                livre.emprunté();
 	                            }
 	                        } catch (NumberFormatException e) {
 	                            System.out.println("ID de livre invalide : " + idStr);

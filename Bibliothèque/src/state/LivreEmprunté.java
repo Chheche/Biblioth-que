@@ -5,8 +5,9 @@ import bibliotheque.Livre;
 public class LivreEmprunté implements EtatLivre {
 
     @Override
-    public void emprunté(Livre livre) {
+    public void emprunté(Livre livre) throws Exception {
         System.out.println("Le livre est déjà emprunté.");
+        throw new Exception("Le livre est déjà emprunté.");
     }
 
     @Override

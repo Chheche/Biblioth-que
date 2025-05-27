@@ -33,6 +33,10 @@ public class AuthentificationService {
     	utilisateurs.put(utilisateur.getEmail(), utilisateur);
     }
     
+    public void supprimerUtilisateur(int id) {
+    	utilisateurs.remove(id);
+    }
+    
     /***
      * Méthode chargerUtilisateurs
      * Permet de récupérer les utilisateurs du fichier txt et de les réajouter dans la map pour que la connexion fonctionne

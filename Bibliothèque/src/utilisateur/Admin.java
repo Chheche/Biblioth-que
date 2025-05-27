@@ -115,7 +115,7 @@ public class Admin extends Utilisateur {
             	ajouterAdherent(scanner, biblio, auth);
                 break;
             case 2:
-            	supprimerAdherent(scanner, biblio);
+            	supprimerAdherent(scanner, biblio, auth);
                 break;
             case 3:
             	voirAdherent(scanner, biblio);
@@ -161,7 +161,7 @@ public class Admin extends Utilisateur {
      * @param scanner
      * @param biblio
      */
-    public void supprimerAdherent(Scanner scanner, Bibliotheque biblio) {
+    public void supprimerAdherent(Scanner scanner, Bibliotheque biblio, AuthentificationService auth) {
     	System.out.println("\n-- Supprimer un adherent --");
         System.out.println("Tapez '1' à tout moment pour annuler\n");
         
@@ -169,7 +169,8 @@ public class Admin extends Utilisateur {
         int id = scanner.nextInt();
         if (id == 1) return;
         
-        //biblio.supprimerAdherent(id);
+        biblio.supprimerAdherent(id);
+        auth.supprimerUtilisateur(id);
     }
     
     /**

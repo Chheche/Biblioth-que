@@ -83,7 +83,7 @@ public class Livre {
     }
 
 
-    public void emprunté() {
+    public void emprunté() throws Exception {
     	etat.emprunté(this);
     }
 
@@ -93,10 +93,6 @@ public class Livre {
     
     public void enRéparation() {
     	etat.enRéparation(this); 
-    }
-    
-    public void doAction() {
-    	etat.doAction(this);
     }
 
     public void setEtat(EtatLivre e) {
