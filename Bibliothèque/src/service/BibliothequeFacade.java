@@ -15,7 +15,7 @@ public class BibliothequeFacade {
      */
     public BibliothequeFacade() {
         biblio = new Bibliotheque();
-        auth = new AuthentificationService();
+        auth = AuthentificationService.getInstance();
         scanner = new Scanner(System.in);
         
         biblio.chargerAdherentsDepuisFichier();

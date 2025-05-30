@@ -9,12 +9,13 @@ import java.io.IOException;
 import java.util.*;
 
 public class AuthentificationService {
+	private static AuthentificationService instance;
     private Map<String, Utilisateur> utilisateurs = new HashMap<>();
 
     /***
      * Constructeur AuthentificationService
      */
-    public AuthentificationService() {
+    private AuthentificationService() {
         Utilisateur admin = UtilisateurFactory.creerUtilisateur("admin", "Rafael", "rafael@bib.com", "admin123");
         Utilisateur adherent = UtilisateurFactory.creerUtilisateur("adherent", "Bob", "bob@bib.com", "bob123");
         
@@ -22,6 +23,13 @@ public class AuthentificationService {
         utilisateurs.put(adherent.getEmail(), adherent);
         
         chargerUtilisateurs();
+    }
+    
+    public static AuthentificationService getInstance() {
+    	if(instance == null) {
+    		instance = new AuthentificationService();
+    	}
+    	return instance;
     }
     
     /***
