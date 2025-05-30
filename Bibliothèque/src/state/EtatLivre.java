@@ -8,5 +8,4 @@ public interface EtatLivre {
     void emprunté(Livre livre) throws Exception;
     void réservé(Livre livre);
     void enRéparation(Livre livre);
-    void doAction(Livre livre);
 }

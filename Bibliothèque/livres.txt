@@ -1,2 +1,17 @@
 1;One piece (tome 1);Eiichiro Oda;Aventure
 2;Le malade imaginaire;Molière;Comédie
+3;1984;George Orwell;Science-fiction
+4;L'Étranger;Albert Camus;Philosophique
+5;Le Petit Prince;Antoine de Saint-Exupéry;Conte
+6;Orgueil et Préjugés;Jane Austen;Romance
+7;Les Misérables;Victor Hugo;Drame
+8;Da Vinci Code;Dan Brown;Thriller
+9;Le Parfum;Patrick Süskind;Psychologique
+10;Autant en emporte le vent;Margaret Mitchell;Historique
+11;Candide;Voltaire;Satire
+12;Fahrenheit 451;Ray Bradbury;Dystopie
+13;L’Art de la guerre;Sun Tzu;Stratégie
+14;Les Fleurs du mal;Charles Baudelaire;Poésie
+15;Shingeki no Kyojin (tome 1);Hajime Isayama;Action
+16;La Peste;Albert Camus;Philosophique
+17;La Promesse de l’aube;Romain Gary;Autobiographie

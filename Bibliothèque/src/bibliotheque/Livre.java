@@ -82,7 +82,6 @@ public class Livre {
         this.etat = new LivreDisponible();
     }
 
-
     public void emprunté() throws Exception {
     	etat.emprunté(this);
     }
@@ -101,5 +100,17 @@ public class Livre {
     
     public EtatLivre getEtat() {
     	return etat;
+    }
+    
+    public boolean estDisponible() {
+        return etat instanceof LivreDisponible;
+    }
+    
+    public boolean estEmprunte() {
+        return etat instanceof LivreEmprunté;
+    }
+    
+    public boolean estEnReparation() {
+        return etat instanceof LivreEnRéparation;
     }
 }

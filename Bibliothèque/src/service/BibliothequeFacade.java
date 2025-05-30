@@ -20,7 +20,7 @@ public class BibliothequeFacade {
         
         biblio.chargerAdherentsDepuisFichier();
         biblio.chargerLivresDepuisFichier();
-        // biblio.chargerEmpruntsDepuisFichier();
+        biblio.chargerEmpruntsDepuisFichier();
     }
     
     /**
@@ -86,6 +86,9 @@ public class BibliothequeFacade {
 	        	admin.afficherLivresEmpruntes(scanner, biblio); //Voir les livres empruntés dans la bibliothèque
 	            break;
 	        case 6:
+	        	admin.gererReparations(scanner, biblio); //Mettre un livre en réparation ou le remettre dans la bibliothèque
+	            break;
+	        case 7:
 	            System.out.println("Déconnexion");
 	            return false;
 	        default:
@@ -116,6 +119,9 @@ public class BibliothequeFacade {
 	        case 4:
 	            break;
 	        case 5:
+	        	adherent.voirLivresEmpruntes(scanner, biblio); //Voir la liste d'emprunts
+	            break;
+	        case 6:
 	            System.out.println("Déconnexion");
 	            return false;
 	        default:

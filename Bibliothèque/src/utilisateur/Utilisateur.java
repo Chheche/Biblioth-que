@@ -1,5 +1,7 @@
 package utilisateur;
 
+import bibliotheque.Emprunt;
+
 public abstract class Utilisateur {
 	protected final int id;
     protected String nom;
@@ -57,5 +59,4 @@ public abstract class Utilisateur {
     public String getMotDePasse() {
         return motDePasse;
     }
-    
 }

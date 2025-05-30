@@ -1,12 +1,13 @@
 package utilisateur;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 import bibliotheque.*;
 import factory.*;
 import service.*;
+import state.*;
 
 public class Admin extends Utilisateur {
 
@@ -26,7 +27,7 @@ public class Admin extends Utilisateur {
     @Override
     public void afficherMenu() {
         System.out.println("\n-- Menu Admin --");
-        System.out.println("1. Ajouter livre\n2. Supprimer livre\n3. Gérer adhérents\n4. Voir bibliothèque\n5. Voir livres empruntés\n6. Se déconnecter");
+        System.out.println("1. Ajouter livre\n2. Supprimer livre\n3. Gérer adhérents\n4. Voir bibliothèque\n5. Voir livres empruntés\n6. Gérer réparation\n7. Se déconnecter");
     }
     
     /**
@@ -196,19 +197,8 @@ public class Admin extends Utilisateur {
      */
     public void afficherLivresEmpruntes(Scanner scanner, Bibliotheque biblio) {
     	System.out.println("\n-- Livres empruntés --");
-    	Map<Utilisateur, List<Livre>> map = biblio.getLivresEmpruntes();
-
-        for (Map.Entry<Utilisateur, List<Livre>> entry : map.entrySet()) {
-            Utilisateur utilisateur = entry.getKey();
-            List<Livre> livres = entry.getValue();
-
-            if (!livres.isEmpty()) {
-                System.out.println("Adhérent : " + utilisateur.getNom());
-                for (Livre livre : livres) {
-                    System.out.println("  - " + livre.getTitre());
-                }
-            }
-        }
+    	
+    	biblio.afficherLivresEmpruntes();
 
         System.out.println("Tapez '1' pour revenir au menu");
         String titre = scanner.nextLine();
@@ -220,8 +210,97 @@ public class Admin extends Utilisateur {
      * Méthode voirLivreEnReparation
      * Permet de voir la liste des livres en réparation
      */
-    public void voirLivreEnReparation() {
-    	
+    public void gererReparations(Scanner scanner, Bibliotheque biblio) {
+
+        while (true) {
+            System.out.println("\n--- Menu Réparation ---");
+            System.out.println("Tapez '0' pour revenir au menu");
+            System.out.println("1. Mettre un livre en réparation");
+            System.out.println("2. Remettre un livre dans la bibliothèque");
+            System.out.print("Choix : ");
+            String choix = scanner.nextLine();
+
+            switch (choix) {
+                case "1":
+                	System.out.println("Tapez '0' pour revenir au menu");
+                    System.out.print("Entrez le titre du livre à réparer : ");
+                    String titre = scanner.nextLine();
+                    if (titre.equals("0")) return;
+                    
+                    Livre trouve = null;
+
+                    for (Livre livre : biblio.getLivres()) {
+                        if (livre.getTitre().toLowerCase().equals(titre.toLowerCase())) {
+                            trouve = livre;
+                            break;
+                        }
+                    }
+                    
+                    if (trouve == null) {
+                        System.out.println("Livre non trouvé.");
+                        return;
+                    }
+                    
+                    if (trouve.estEmprunte()) {
+                        System.out.println("Erreur : Ce livre est déjà emprunté !");
+                        return;
+                    }else if (trouve.estEnReparation()) {
+                        System.out.println("Erreur : Ce livre est déjà en réparation !");
+                        return;
+                    }
+                    
+                    try {
+                        trouve.enRéparation();
+                        biblio.ajouterReparation(trouve);
+                    }catch(Exception e) {
+                    	System.out.println("Erreur : " + e.getMessage());
+                    	return;
+                    }
+                    break;
+
+                case "2":
+                    System.out.println("\n--- Livres en réparation ---");
+                    List<Livre> livresEnReparation = biblio.getLivresEnReparation();
+
+                    if (livresEnReparation.isEmpty()) {
+                        System.out.println("Aucun livre en réparation.");
+                    } else {
+                        for (Livre l : livresEnReparation) {
+                            System.out.println("- " + l.getTitre());
+                        }
+
+                        System.out.println("Tapez '0' pour revenir au menu");
+                        System.out.print("Entrez le titre du livre à remettre en disponibilité : ");
+                        String titreRemis = scanner.nextLine();
+                        if (titreRemis.equals("0")) return;
+                        
+                        Livre livreRemis = null;
+
+                        for (Livre livre : biblio.getLivres()) {
+                            if (livre.getTitre().toLowerCase().equals(titreRemis.toLowerCase())) {
+                            	livreRemis = livre;
+                                break;
+                            }
+                        }
+
+                        if (livreRemis != null && livreRemis.getEtat() instanceof LivreEnRéparation) {
+                            livreRemis.disponible();
+                            biblio.supprimerReparation(livreRemis);
+                            System.out.println("Le livre \"" + livreRemis.getTitre() + "\" est maintenant disponible.");
+                            return;
+                        } else {
+                            System.out.println("Livre introuvable ou non en réparation.");
+                        }
+                    }
+                    break;
+
+                case "0":
+                    return;
+
+                default:
+                    System.out.println("Choix invalide.");
+            }
+        }
     }
     
     /**

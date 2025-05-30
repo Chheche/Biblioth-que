@@ -6,30 +6,29 @@ public class LivreEmprunté implements EtatLivre {
 
     @Override
     public void emprunté(Livre livre) throws Exception {
-        System.out.println("Le livre est déjà emprunté.");
-        throw new Exception("Le livre est déjà emprunté.");
+    	try {
+            System.out.println("Le livre est déjà emprunté.");
+            return;
+    	}catch(Exception e) {
+    		System.out.println("impossible" + e.getMessage());
+    	}
     }
 
     @Override
     public void réservé(Livre livre) {
-        System.out.println("Le livre est réservé.");
+        System.out.println("Le livre est réservé. Il sera disponlibe après son retour.");
         livre.setEtat(new LivreRéservé());
     }
 
     @Override
     public void enRéparation(Livre livre) {
-        System.out.println("Le livre emprunté est en réparation.");
+        System.out.println("Impossible de mettre le livre en réparation ! Il est emprunté.");
         livre.setEtat(new LivreEnRéparation());
-    }
-
-    @Override
-    public void doAction(Livre livre) {
-        System.out.println("Le livre est actuellement emprunté.");
     }
 
 	@Override
 	public void disponible(Livre livre) {
-		System.out.println("Le livre n'est pas disponible");
+		System.out.println("Le livre emprunté n'est pas disponible");
 	}
 	
 	@Override

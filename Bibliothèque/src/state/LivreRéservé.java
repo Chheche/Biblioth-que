@@ -21,14 +21,13 @@ public class LivreRéservé implements EtatLivre {
         livre.setEtat(new LivreEnRéparation());
     }
 
-    @Override
-    public void doAction(Livre livre) {
-        System.out.println("Le livre est réservé.");
-    }
-
 	@Override
 	public void disponible(Livre livre) {
 		System.out.println("Le livre n'est pas disponible");
-		
+	}
+	
+	@Override
+	public String toString() {
+	    return "Réservé";
 	}
 }

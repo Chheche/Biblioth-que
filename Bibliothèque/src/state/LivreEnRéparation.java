@@ -19,13 +19,13 @@ public class LivreEnRéparation implements EtatLivre {
         System.out.println("Le livre est deja en réparation.");
     }
 
-    @Override
-    public void doAction(Livre livre) {
-        System.out.println("Le livre est en réparation.");
-    }
-
 	@Override
 	public void disponible(Livre livre) {
 		System.out.println("Le livre n'est pas disponible");
+	}
+	
+	@Override
+	public String toString() {
+	    return "En réparation";
 	}
 }

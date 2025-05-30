@@ -23,11 +23,6 @@ public class LivreDisponible implements EtatLivre {
         livre.setEtat(new LivreEnRéparation());
     }
 
-    @Override
-    public void doAction(Livre livre) {
-        System.out.println("Le livre est disponible.");
-    }
-
 	@Override
 	public void disponible(Livre livre) {
 		System.out.println("Le livre est disponible.");

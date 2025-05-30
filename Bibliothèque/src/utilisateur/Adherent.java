@@ -1,14 +1,13 @@
 package utilisateur;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import bibliotheque.*;
-import state.*;
 
 public class Adherent extends Utilisateur {
-    private List<Livre> livresEmpruntes;
 
     /**
      * Constructeur Adherent
@@ -17,12 +16,10 @@ public class Adherent extends Utilisateur {
      */
     public Adherent(String nom, String email, String motDePasse) {
         super(nom, email, motDePasse);
-        this.livresEmpruntes = new ArrayList<>();
     }
     
     public Adherent(int id, String nom, String email, String motDePasse) {
         super(id, nom, email, motDePasse);
-        this.livresEmpruntes = new ArrayList<>();
     }
 
     /**
@@ -32,20 +29,7 @@ public class Adherent extends Utilisateur {
     @Override
     public void afficherMenu() {
         System.out.println("\n-- Menu Adhérent --");
-        System.out.println("1. Voir les livres\n2. Emprunter\n3. Retourner et voir livre(s) emprunté(s)\n4. Réserver\n5. Se déconnecter");
-    }
-
-    public List<Livre> getLivresEmpruntes() {
-        return livresEmpruntes;
-    }
-
-    /**
-     * Méthode ajouterLivre
-     * Permet d'emprunter un livre en l'ajouter dans la list de livre emprunté de l'adhérent
-     * @param livre
-     */
-    public void ajouterLivre(Livre livre) {
-        livresEmpruntes.add(livre);
+        System.out.println("1. Voir les livres\n2. Emprunter\n3. Retourner\n4. Réserver\n5. Voir livre(s) emprunté(s)\n6. Se déconnecter");
     }
 
 	@Override
@@ -64,9 +48,39 @@ public class Adherent extends Utilisateur {
         
         biblio.afficherLivres();
         
-        System.out.println("Tapez '1' pour revenir au menu");
+        System.out.println("Tapez '0' pour revenir au menu");
         String titre = scanner.nextLine();
-        if (titre.equals("1")) return;
+        if (titre.equals("0")) return;
+    }
+    
+    /**
+     * Méthode voirLivresEmpruntes
+     * Permet de voir la liste des emprunts
+     * @param scanner
+     * @param biblio
+     */
+    public void voirLivresEmpruntes(Scanner scanner, Bibliotheque biblio) {
+    	System.out.println("\n-- Emprunts --");
+    	System.out.println("Attention ! 1€ par jour de retard");
+        
+    	List<Emprunt> emprunts = new ArrayList<>();
+    	for (Emprunt e : biblio.getLivresEmpruntes()) {
+    	    if (e.getAdherent().equals(this)) {
+    	        emprunts.add(e);
+    	    }
+    	}
+    	if (emprunts.isEmpty()) {
+    	    System.out.println("Aucun livre emprunté.");
+    	} else {
+    	    for (Emprunt e : emprunts) {
+    	        System.out.println(e.affichage());
+    	    }
+    	}
+
+        
+        System.out.println("Tapez '0' pour revenir au menu");
+        String titre = scanner.nextLine();
+        if (titre.equals("0")) return;
     }
     
     /**
@@ -83,8 +97,8 @@ public class Adherent extends Utilisateur {
         if (choix.equals("0")) return;
 
         String titre = choix.toLowerCase();
-
         Livre trouve = null;
+        
         for (Livre livre : biblio.getLivres()) {
             if (livre.getTitre().toLowerCase().equals(titre)) {
                 trouve = livre;
@@ -96,19 +110,27 @@ public class Adherent extends Utilisateur {
             System.out.println("Livre non trouvé.");
             return;
         }
+        
+        if (trouve.estEmprunte()) {
+            System.out.println("Erreur : Ce livre est déjà emprunté !");
+            return;
+        }else if (trouve.estEnReparation()) {
+            System.out.println("Erreur : Ce livre est en réparation !");
+            return;
+        }
 
         try {
             trouve.emprunté();
-            livresEmpruntes.add(trouve);
+            LocalDate debut = LocalDate.now();
+            LocalDate fin = debut.plusWeeks(2);
+            Emprunt emprunt = new Emprunt(trouve, this, debut, fin);
+            
+            biblio.ajouterEmprunt(emprunt);
         }catch(Exception e) {
         	System.out.println("Erreur : " + e.getMessage());
         	return;
         }
-
-        System.out.println("Livre '" + trouve.getTitre() + "' emprunté avec succès.");
-        biblio.ajouterEmprunt(this, trouve);
     }
-
     
     /**
      * Méthode retournerLivre
@@ -117,46 +139,37 @@ public class Adherent extends Utilisateur {
      * @param biblio
      */
     public void retournerLivre(Scanner scanner, Bibliotheque biblio) {
-        List<Livre> empruntes = biblio.getLivresEmpruntes().get(this);
+        System.out.println("\n-- Retourner un livre --");
+        System.out.println("Tapez '0' pour revenir au menu");
+        System.out.print("Entrez le titre du livre à retourner : ");
+        String choix = scanner.nextLine();
+        if (choix.equals("0")) return;
 
-        if (empruntes == null || empruntes.isEmpty()) {
-            System.out.println("Vous n'avez emprunté aucun livre.");
+        String titre = choix.toLowerCase();
+        Emprunt trouve = null;
+
+        for (Emprunt emprunt : biblio.getLivresEmpruntes()) {
+            if (emprunt.getLivre().getTitre().toLowerCase().equals(titre)) {
+                trouve = emprunt;
+                break;
+            }
+        }
+
+        if (trouve == null) {
+            System.out.println("Livre non trouvé.");
             return;
         }
 
-        System.out.println("\n-- Vos livres empruntés --");
-        for (int i = 0; i < empruntes.size(); i++) {
-            System.out.println((i + 1) + ". " + empruntes.get(i).getTitre());
+        if (trouve.estEnRetard()) {
+            double amende = trouve.calculerAmende();
+            System.out.println("Retour en retard ! Amende due : " + amende + "€");
+        } else {
+            System.out.println("Livre retourné à temps.");
         }
 
-        System.out.println("Tapez '0' pour revenir au menu");
-        System.out.print("Entrez le numéro du livre à retourner : ");
-        String input = scanner.nextLine();
-        if (input.equals("0")) return;
-
-        try {
-            int choix = Integer.parseInt(input);
-            if (choix < 1 || choix > empruntes.size()) {
-                System.out.println("Choix invalide.");
-                return;
-            }
-
-            Livre aRetourner = empruntes.get(choix - 1);
-            aRetourner.disponible();
-
-            empruntes.remove(aRetourner);
-            if (empruntes.isEmpty()) {
-                biblio.getLivresEmpruntes().remove(this);
-            }
-
-            System.out.println("Livre '" + aRetourner.getTitre() + "' retourné avec succès.");
-            biblio.sauvegarderEmprunts();
-        } catch (NumberFormatException e) {
-            System.out.println("Entrée non valide.");
-        }
+        trouve.getLivre().disponible();
+        biblio.supprimerEmprunt(trouve.getId());
     }
-
-
     
     /**
      * Méthode reserver
@@ -178,4 +191,17 @@ public class Adherent extends Utilisateur {
     	
     }
     
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Adherent other = (Adherent) obj;
+        return this.getId() == other.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(this.getId());
+    }
+
 }

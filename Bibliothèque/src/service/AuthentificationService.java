@@ -33,8 +33,27 @@ public class AuthentificationService {
     	utilisateurs.put(utilisateur.getEmail(), utilisateur);
     }
     
+    /**
+     * Méthode supprimerUtilisateur
+     * Permet de supprimer complétement l'utilisateur de l'authentification et non seulement de la bibliotheque.
+     * @param id
+     */
     public void supprimerUtilisateur(int id) {
-    	utilisateurs.remove(id);
+        String email = null;
+
+        for (Map.Entry<String, Utilisateur> entry : utilisateurs.entrySet()) {
+            if (entry.getValue().getId() == id) {
+                email = entry.getKey();
+                break;
+            }
+        }
+
+        if (email != null) {
+            utilisateurs.remove(email);
+            System.out.println("Utilisateur supprimé du système d'authentification.");
+        } else {
+            System.out.println("Aucun utilisateur avec cet ID trouvé dans le système d'authentification.");
+        }
     }
     
     /***
