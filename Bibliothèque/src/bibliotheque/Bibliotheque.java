@@ -57,6 +57,7 @@ public class Bibliotheque {
     
     public void ajouterReparation(Livre livre) {
     	livresEnReparation.add(livre);
+    	sauvegarderReparation(livre);
     }
     
     /************************ Suppression *******************************/
@@ -102,7 +103,7 @@ public class Bibliotheque {
 
 	    if (adherentASupprimer != null) {
 	        adherents.remove(adherentASupprimer);
-	        reecrireLivre();
+	        reecrireUtilisateur();
 	        System.out.println("Adherent supprimé !");
 	    } else {
 	        System.out.println("Aucun adherent avec cet ID.");
@@ -139,7 +140,9 @@ public class Bibliotheque {
 	 */
 	public void supprimerReparation(Livre livre) {
 	    livresEnReparation.remove(livre);
+	    reecrireReparations();
 	}
+	
 	
 	/************************ Affichage *******************************/
 
@@ -193,7 +196,7 @@ public class Bibliotheque {
 	 * @param livre
 	 */
 	public void sauvegarderLivre(Livre livre) {
-	    try (FileWriter writer = new FileWriter("livres.txt", true)) { // true = permet d'ajouter à la fin
+	    try (FileWriter writer = new FileWriter("livres.txt", true)) {
 	    	writer.write(livre.getId() + ";" + livre.getTitre() + ";" + livre.getAuteur() + ";" + livre.getCategorie() + "\n");
 	    } catch (IOException e) {
 	        System.out.println("Erreur lors de la sauvegarde : " + e.getMessage());
@@ -206,7 +209,7 @@ public class Bibliotheque {
 	 * @param adherent
 	 */
 	public void sauvegarderAdherent(Utilisateur adherent) {
-	    try (FileWriter writer = new FileWriter("adherents.txt", true)) { // true = permet d'ajouter à la fin
+	    try (FileWriter writer = new FileWriter("adherents.txt", true)) {
 	    	writer.write(adherent.getId() + ";" + adherent.getNom() + ";" + adherent.getEmail() + ";" + adherent.getMotDePasse() + "\n");
 	    } catch (IOException e) {
 	        System.out.println("Erreur lors de la sauvegarde : " + e.getMessage());
@@ -219,7 +222,7 @@ public class Bibliotheque {
 	 * @param emprunt
 	 */
 	public void sauvegarderEmprunt(Emprunt emprunt) {
-	    try (FileWriter writer = new FileWriter("emprunts.txt", true)) { // true = append
+	    try (FileWriter writer = new FileWriter("emprunts.txt", true)) {
 	        writer.write(
 	            emprunt.getId() + ";" +
 	            emprunt.getLivre().getId() + ";" +
@@ -232,6 +235,20 @@ public class Bibliotheque {
 	    }
 	}
 	
+	/**
+	 * Méthode sauvegarderReparation
+	 * Permet de sauvegarder les livres en réparation dans un fichier txt
+	 * @param livre
+	 */
+	public void sauvegarderReparation(Livre livre) {
+	    try (FileWriter writer = new FileWriter("reparations.txt", true)) {
+	        writer.write(livre.getId() + ";" + livre.getTitre() + ";" + livre.getAuteur() + ";" + livre.getCategorie() + "\n");
+	    } catch (IOException e) {
+	        System.out.println("Erreur lors de la sauvegarde du livre en réparation : " + e.getMessage());
+	    }
+	}
+
+	
 	/************************ Réecriture *******************************/
 	
 	/**
@@ -239,7 +256,7 @@ public class Bibliotheque {
 	 * Permet de réecrire par dessus tout le fichier txt (évite le problème des id). Utile lorsque l'on supprime un livre.
 	 */
 	public void reecrireLivre() {
-	    try (FileWriter writer = new FileWriter("livres.txt", false)) { // false = écrase tout
+	    try (FileWriter writer = new FileWriter("livres.txt", false)) {
 	        for (Livre livre : livres) {
 	            writer.write(livre.getId() + ";" + livre.getTitre() + ";" + livre.getAuteur() + ";" + livre.getCategorie() + "\n");
 	        }
@@ -253,7 +270,7 @@ public class Bibliotheque {
 	 * Permet de réecrire par dessus tout le fichier txt (évite le problème des id)
 	 */
 	public void reecrireUtilisateur() {
-	    try (FileWriter writer = new FileWriter("adherents.txt", false)) { // false = écrase tout
+	    try (FileWriter writer = new FileWriter("adherents.txt", false)) {
 	        for (Utilisateur adherent : adherents) {
 	        	writer.write(adherent.getId() + ";" + adherent.getNom() + ";" + adherent.getEmail() + ";" + adherent.getMotDePasse() + "\n");
 	        }
@@ -279,6 +296,21 @@ public class Bibliotheque {
 	        System.out.println("Erreur lors de la réécriture des emprunts : " + e.getMessage());
 	    }
 	}
+	
+	/**
+	 * Méthode reecrireReparations
+	 * Permet de réecrire les informations sans celle supprimer précédement
+	 */
+	public void reecrireReparations() {
+	    try (FileWriter writer = new FileWriter("reparations.txt", false)) {
+	        for (Livre livre : livresEnReparation) {
+	            writer.write(livre.getId() + ";" + livre.getTitre() + ";" + livre.getAuteur() + ";" + livre.getCategorie() + "\n");
+	        }
+	    } catch (IOException e) {
+	        System.out.println("Erreur lors de la réécriture du fichier de réparations : " + e.getMessage());
+	    }
+	}
+
 	
 	/************************ Chargement *******************************/
 	
@@ -365,6 +397,31 @@ public class Bibliotheque {
 	    	System.out.println("Erreur état emprunt : " + e.getMessage());
 		}
 	}
+	
+	/**
+	 * Méthode chargerLivresEnReparation
+	 * Permet de charger le fichier lors du début du programme
+	 */
+	public void chargerLivresEnReparation() {
+	    try (BufferedReader reader = new BufferedReader(new FileReader("reparations.txt"))) {
+	        String ligne;
+	        while ((ligne = reader.readLine()) != null) {
+	            String[] parties = ligne.split(";");
+	            if (parties.length == 4) {
+	                int id = Integer.parseInt(parties[0]);
+
+	                Livre livre = getLivreParId(id);
+	                if (livre != null) {
+	                    livre.setEtat(new LivreEnRéparation());
+	                    livresEnReparation.add(livre);
+	                }
+	            }
+	        }
+	    } catch (IOException e) {
+	        System.out.println("Aucun fichier de réparations trouvé.");
+	    }
+	}
+
 	
 	/************************ Getters *******************************/
 

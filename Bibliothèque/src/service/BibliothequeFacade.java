@@ -21,6 +21,7 @@ public class BibliothequeFacade {
         biblio.chargerAdherentsDepuisFichier();
         biblio.chargerLivresDepuisFichier();
         biblio.chargerEmpruntsDepuisFichier();
+        biblio.chargerLivresEnReparation();
     }
     
     /**

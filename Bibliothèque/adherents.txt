@@ -1,3 +1,2 @@
 3;Test;test@bib.com;test123
 4;a;a@bib.com;a123
-6;max;max@bib.com;max123
