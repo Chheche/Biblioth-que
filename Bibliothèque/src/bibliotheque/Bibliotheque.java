@@ -11,15 +11,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import observer.*;
 import state.*;
 import utilisateur.*;
 
-public class Bibliotheque {
+public class Bibliotheque implements Observable {
     private List<Livre> livres = new ArrayList<>();
     private List<Utilisateur> adherents = new ArrayList();
     private List<Emprunt> livresEmpruntes = new ArrayList<>();
     private List<Livre> livresEnReparation = new ArrayList();
-    private Map<Livre, Utilisateur> livresReserve = new HashMap<>();
+    private List<Reserve> livresReserve = new ArrayList();
+    private List<Observer> observateurs = new ArrayList<>();
 
     /************************ Ajout *******************************/
     
@@ -58,6 +60,11 @@ public class Bibliotheque {
     public void ajouterReparation(Livre livre) {
     	livresEnReparation.add(livre);
     	sauvegarderReparation(livre);
+    }
+    
+    public void ajouterReservation(Reserve reserve) {
+    	livresReserve.add(reserve);
+    	sauvegarderReservation(reserve);
     }
     
     /************************ Suppression *******************************/
@@ -143,6 +150,11 @@ public class Bibliotheque {
 	    reecrireReparations();
 	}
 	
+	public void supprimerReservation(Reserve reserve) {
+	    livresReserve.remove(reserve);
+	    reecrireReservations();
+	}
+	
 	
 	/************************ Affichage *******************************/
 
@@ -170,6 +182,16 @@ public class Bibliotheque {
         } else {
             for (Emprunt l : livresEmpruntes) {
                 System.out.println(l);
+            }
+        }
+    }
+	
+	public void afficherLivresReserves() {
+        if (livresReserve.isEmpty()) {
+            System.out.println("Aucun livre réservé.");
+        } else {
+            for (Reserve r : livresReserve) {
+                System.out.println(r);
             }
         }
     }
@@ -212,7 +234,7 @@ public class Bibliotheque {
 	    try (FileWriter writer = new FileWriter("adherents.txt", true)) {
 	    	writer.write(adherent.getId() + ";" + adherent.getNom() + ";" + adherent.getEmail() + ";" + adherent.getMotDePasse() + "\n");
 	    } catch (IOException e) {
-	        System.out.println("Erreur lors de la sauvegarde : " + e.getMessage());
+	        System.out.println("Erreur lors de la sauvegarde de l'adherent : " + e.getMessage());
 	    }
 	}
 	
@@ -245,6 +267,19 @@ public class Bibliotheque {
 	        writer.write(livre.getId() + ";" + livre.getTitre() + ";" + livre.getAuteur() + ";" + livre.getCategorie() + "\n");
 	    } catch (IOException e) {
 	        System.out.println("Erreur lors de la sauvegarde du livre en réparation : " + e.getMessage());
+	    }
+	}
+	
+	/**
+	 * Méthode sauvegarderReparation
+	 * Permet de sauvegarder les livres en réservation dans un fichier txt
+	 * @param livre
+	 */
+	public void sauvegarderReservation(Reserve r) {
+	    try (FileWriter writer = new FileWriter("reservations.txt", true)) {
+	        writer.write(r.getId() + ";" + r.getLivre().getId() + ";" + r.getAdherent().getId() + ";" + r.getDateDeReservation() + "\n");
+	    } catch (IOException e) {
+	        System.out.println("Erreur lors de la sauvegarde du livre en réservation : " + e.getMessage());
 	    }
 	}
 
@@ -308,6 +343,16 @@ public class Bibliotheque {
 	        }
 	    } catch (IOException e) {
 	        System.out.println("Erreur lors de la réécriture du fichier de réparations : " + e.getMessage());
+	    }
+	}
+	
+	public void reecrireReservations() {
+	    try (FileWriter writer = new FileWriter("reservations.txt", false)) {
+	        for (Reserve r : livresReserve) {
+	            writer.write(r.getId() + ";" + r.getLivre().getId() + ";" + r.getAdherent().getId() + ";" + r.getDateDeReservation() + "\n");
+	        }
+	    } catch (IOException e) {
+	        System.out.println("Erreur lors de la réécriture des réservations : " + e.getMessage());
 	    }
 	}
 
@@ -421,6 +466,41 @@ public class Bibliotheque {
 	        System.out.println("Aucun fichier de réparations trouvé.");
 	    }
 	}
+	
+	/**
+	 * Méthode chargerReservationsDepuisFichier
+	 * Permet de charger les réservations
+	 */
+	public void chargerReservationsDepuisFichier() {
+	    try (BufferedReader reader = new BufferedReader(new FileReader("reservations.txt"))) {
+	        String ligne;
+	        while ((ligne = reader.readLine()) != null) {
+	            String[] parties = ligne.split(";");
+	            if (parties.length != 4) continue;
+
+	            int id = Integer.parseInt(parties[0]);
+	            int idLivre = Integer.parseInt(parties[1]);
+	            int idAdherent = Integer.parseInt(parties[2]);
+	            LocalDate dateDeReservation = LocalDate.parse(parties[3]);
+
+	            Livre livre = getLivreParId(idLivre);
+	            Utilisateur adherent = getAdherentParId(idAdherent);
+
+	            if (livre != null && adherent != null) {
+	                Reserve reserve = new Reserve(id, livre, adherent, dateDeReservation);
+	                livresReserve.add(reserve);
+	                livre.setEtat(new LivreRéservé());
+	            } else {
+	                System.out.println("Erreur de correspondance d'ID pour la réservation " + id);
+	            }
+	        }
+	    } catch (IOException e) {
+	        System.out.println("Erreur lors du chargement des réservations : " + e.getMessage());
+	    } catch (Exception e) {
+			// TODO Auto-generated catch block
+	    	System.out.println("Erreur état réservation : " + e.getMessage());
+		}
+	}
 
 	
 	/************************ Getters *******************************/
@@ -446,6 +526,16 @@ public class Bibliotheque {
         }
         return null;
     }
+    
+    public Utilisateur getReservation(Livre livre) {
+        for (Reserve r : livresReserve) {
+            if (r.getLivre().equals(livre)) {
+                return r.getAdherent();
+            }
+        }
+        return null;
+    }
+
 
 	public List<Utilisateur> getAdherents() {
 		return adherents;
@@ -459,8 +549,31 @@ public class Bibliotheque {
 		return livresEnReparation;
 	}
 
-	public Map<Livre, Utilisateur> getLivresReserve() {
+	public List<Reserve> getLivresReserve() {
 		return livresReserve;
 	}
+	
+	/****** Observer ******/
+
+	@Override
+	public void ajouterObservateur(Observer o) {
+		observateurs.add(o);
+	}
+
+	@Override
+	public void supprimerObservateur(Observer o) {
+		observateurs.remove(o);
+	}
+
+	@Override
+	public void notifierObservateurs(String message) {
+		for(Observer o : observateurs) {
+			o.notifier(message);
+		}
+	}
+	
+    public void notifierAdherentPourLivre(Utilisateur adherent, Livre livre) {
+        adherent.notifier("Le livre '" + livre.getTitre() + "' que vous avez réservé est maintenant disponible !");
+    }
 
 }

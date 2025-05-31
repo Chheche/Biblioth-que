@@ -27,7 +27,7 @@ public class Admin extends Utilisateur {
     @Override
     public void afficherMenu() {
         System.out.println("\n-- Menu Admin --");
-        System.out.println("1. Ajouter livre\n2. Supprimer livre\n3. Gérer adhérents\n4. Voir bibliothèque\n5. Voir livres empruntés\n6. Gérer réparation\n7. Se déconnecter");
+        System.out.println("1. Ajouter livre\n2. Supprimer livre\n3. Gérer adhérents\n4. Voir bibliothèque\n5. Voir livres empruntés\n6. Voir livres réservés\n7. Gérer réparation\n8. Se déconnecter");
     }
     
     /**
@@ -304,10 +304,24 @@ public class Admin extends Utilisateur {
     }
     
     /**
-     * Méthode voirLivreReserve
+     * Méthode afficherLivresReserves
      * Permet de voir la liste des livres en réservation
+     * @param scanner
+     * @param biblio
      */
-    public void voirLivreReserve() {
+    public void afficherLivresReserves(Scanner scanner, Bibliotheque biblio) {
+    	System.out.println("\n-- Livres réservés --");
     	
+    	biblio.afficherLivresReserves();
+
+        System.out.println("Tapez '1' pour revenir au menu");
+        String titre = scanner.nextLine();
+        if (titre.equals("1")) return;
     }
+
+	@Override
+	public void notifier(String msg) {
+		// TODO Auto-generated method stub
+		
+	}
 }

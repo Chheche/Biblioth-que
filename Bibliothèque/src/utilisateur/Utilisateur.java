@@ -1,8 +1,9 @@
 package utilisateur;
 
 import bibliotheque.Emprunt;
+import observer.*;
 
-public abstract class Utilisateur {
+public abstract class Utilisateur implements Observer {
 	protected final int id;
     protected String nom;
     protected String email;

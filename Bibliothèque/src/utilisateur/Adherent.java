@@ -1,13 +1,16 @@
 package utilisateur;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import bibliotheque.*;
+import state.*;
 
 public class Adherent extends Utilisateur {
+	private List<String> notifications = new ArrayList<>();
 
     /**
      * Constructeur Adherent
@@ -29,7 +32,8 @@ public class Adherent extends Utilisateur {
     @Override
     public void afficherMenu() {
         System.out.println("\n-- Menu Adhérent --");
-        System.out.println("1. Voir les livres\n2. Emprunter\n3. Retourner\n4. Réserver\n5. Voir livre(s) emprunté(s)\n6. Se déconnecter");
+        System.out.println("1. Voir les livres\n2. Emprunter\n3. Retourner\n4. Réserver\n5. Voir livre(s) emprunté(s)\n6. Voir livre(s) réservé(s)\n7. Se déconnecter");
+        afficherNotifications();
     }
 
 	@Override
@@ -112,11 +116,32 @@ public class Adherent extends Utilisateur {
         }
         
         if (trouve.estEmprunte()) {
-            System.out.println("Erreur : Ce livre est déjà emprunté !");
+            System.out.println("Erreur : Ce livre est déjà emprunté ! Vous pouvez le réserver dans la section \"Réserver\"");
             return;
         }else if (trouve.estEnReparation()) {
             System.out.println("Erreur : Ce livre est en réparation !");
             return;
+        }
+        
+        for (Reserve res : biblio.getLivresReserve()) {
+            if (res.getLivre().equals(trouve)) {
+                if (!res.getAdherent().equals(this)) {
+                    long jours = ChronoUnit.DAYS.between(res.getDateDeReservation(), LocalDate.now());
+                    if (jours <= 3) {
+                        System.out.println("Ce livre est réservé pendant encore " + (3 - jours) + " jour(s). Vous ne pouvez pas l’emprunter.");
+                        return;
+                    } else {
+                        System.out.println("La réservation a expiré, le livre redevient disponible.");
+                        biblio.supprimerReservation(res);
+                        trouve.setEtat(new LivreDisponible());
+                        break;
+                    }
+                } else {
+                    biblio.supprimerReservation(res);
+                    trouve.setEtat(new LivreDisponible());
+                    break;
+                }
+            }
         }
 
         try {
@@ -166,8 +191,17 @@ public class Adherent extends Utilisateur {
         } else {
             System.out.println("Livre retourné à temps.");
         }
+        
+        Livre livre = trouve.getLivre();
+        Utilisateur reservant = biblio.getReservation(livre);
 
-        trouve.getLivre().disponible();
+        if (reservant != null) {
+            livre.setEtat(new LivreRéservé());
+            biblio.notifierAdherentPourLivre(reservant, livre);
+        } else {
+            livre.disponible();
+        }
+
         biblio.supprimerEmprunt(trouve.getId());
     }
     
@@ -177,8 +211,83 @@ public class Adherent extends Utilisateur {
      * @param scanner
      * @param biblio
      */
-    public void reserver(Scanner scanner, Bibliotheque biblio) {
-    	
+    public void reserverLivre(Scanner scanner, Bibliotheque biblio) {
+        System.out.println("\n-- Reserver un livre --");
+        System.out.println("Tapez '0' pour revenir au menu");
+        System.out.print("Entrez le titre du livre à réserver : ");
+        String choix = scanner.nextLine();
+        if (choix.equals("0")) return;
+
+        String titre = choix.toLowerCase();
+        Livre trouve = null;
+        
+        for (Livre livre : biblio.getLivres()) {
+            if (livre.getTitre().toLowerCase().equals(titre)) {
+                trouve = livre;
+                break;
+            }
+        }
+
+        if (trouve == null) {
+            System.out.println("Livre non trouvé.");
+            return;
+        }
+        
+        if (trouve.estEnReparation()) {
+            System.out.println("Erreur : Ce livre est en réparation !");
+            return;
+        }
+        
+        if (trouve.getEtat() instanceof LivreDisponible) {
+            System.out.println("Le livre est disponible, inutile de le réserver !");
+            return;
+        }
+        
+        for (Reserve r : biblio.getLivresReserve()) {
+            if (r.getLivre().equals(trouve) && r.getAdherent().equals(this)) {
+                System.out.println("Vous avez déjà réservé ce livre.");
+                return;
+            }
+        }
+
+        try {
+        	LocalDate debut = LocalDate.now();
+            Reserve reserve = new Reserve(trouve, this, debut);
+            biblio.ajouterReservation(reserve);
+            System.out.println("Réservation effectuée avec succès.");
+        }catch(Exception e) {
+        	System.out.println("Erreur : " + e.getMessage());
+        	return;
+        }
+    }
+    
+    /**
+     * Méthode voirLivresReserves
+     * Permet à l'adherent de voir sa liste de réservations
+     * @param scanner
+     * @param biblio
+     */
+    public void voirLivresReserves(Scanner scanner, Bibliotheque biblio) {
+    	System.out.println("\n-- Réservations --");
+        
+    	List<Reserve> reservations = new ArrayList<>();
+    	for (Reserve r : biblio.getLivresReserve()) {
+    	    if (r.getAdherent().equals(this)) {
+    	    	reservations.add(r);
+    	    }
+    	}
+    	if (reservations.isEmpty()) {
+    	    System.out.println("Aucun livre emprunté.");
+    	} else {
+    	    for (Reserve r : reservations) {
+    	        System.out.println(r.affichage());
+    	    }
+    	}
+
+        
+        System.out.println("Tapez '0' pour revenir au menu");
+        String titre = scanner.nextLine();
+        if (titre.equals("0")) return;
     }
     
     /**
@@ -202,6 +311,23 @@ public class Adherent extends Utilisateur {
     @Override
     public int hashCode() {
         return Integer.hashCode(this.getId());
+    }
+
+	@Override
+	public void notifier(String msg) {
+		notifications.add(msg);
+	}
+	
+    public void afficherNotifications() {
+        if (notifications.isEmpty()) {
+            System.out.println("Aucune nouvelle notification.");
+        } else {
+            System.out.println("Vos notifications :");
+            for (String msg : notifications) {
+                System.out.println(" - " + msg);
+            }
+            notifications.clear();
+        }
     }
 
 }
