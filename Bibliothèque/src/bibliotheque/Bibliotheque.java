@@ -57,11 +57,21 @@ public class Bibliotheque implements Observable {
         sauvegarderEmprunt(emprunt);
     }
     
+    /**
+     * Méthode ajouterReparation
+     * Permet d'ajouter à la liste une réparation
+     * @param livre
+     */
     public void ajouterReparation(Livre livre) {
     	livresEnReparation.add(livre);
     	sauvegarderReparation(livre);
     }
     
+    /**
+     * Méthode ajouterReservation
+     * Permet d'ajouter à la liste une reservation	
+     * @param reserve
+     */
     public void ajouterReservation(Reserve reserve) {
     	livresReserve.add(reserve);
     	sauvegarderReservation(reserve);
@@ -150,6 +160,11 @@ public class Bibliotheque implements Observable {
 	    reecrireReparations();
 	}
 	
+	/**
+	 * Méthode supprimerReservation
+	 * Permet de supprimer de la liste la reservation
+	 * @param reserve
+	 */
 	public void supprimerReservation(Reserve reserve) {
 	    livresReserve.remove(reserve);
 	    reecrireReservations();
@@ -186,6 +201,10 @@ public class Bibliotheque implements Observable {
         }
     }
 	
+	/**
+	 * Méthode afficherLivresReserves
+	 * Permet d'afficher la liste des réservations
+	 */
 	public void afficherLivresReserves() {
         if (livresReserve.isEmpty()) {
             System.out.println("Aucun livre réservé.");

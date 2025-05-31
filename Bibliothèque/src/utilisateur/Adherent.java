@@ -290,16 +290,6 @@ public class Adherent extends Utilisateur {
         if (titre.equals("0")) return;
     }
     
-    /**
-     * Méthode information
-     * Permet de voir les différentes information (amende de retard, notification via observer
-     * @param scanner
-     * @param biblio
-     */
-    public void information(Scanner scanner, Bibliotheque biblio) {
-    	
-    }
-    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
